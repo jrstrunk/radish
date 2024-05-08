@@ -1,5 +1,6 @@
 import gleam/erlang/process
 import gleam/function
+import gleam/io
 import gleam/list
 import gleam/result
 
@@ -22,6 +23,7 @@ pub fn execute(
 ) {
   use reply <- result.then(
     process.try_call(client, client.Command(cmd, _, timeout), timeout)
+    // |> io.debug
     |> result.replace_error(error.ActorError),
   )
 

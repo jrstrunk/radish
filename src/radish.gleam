@@ -581,10 +581,10 @@ pub fn subscribe(
       list.each(value, fn(item) {
         case item {
           resp.Push([
-            resp.BulkString("subscribe"),
-            resp.BulkString(channel),
-            resp.Integer(n),
-          ]) -> Ok(init_handler(channel, n))
+              resp.BulkString("subscribe"),
+              resp.BulkString(channel),
+              resp.Integer(n),
+            ]) -> Ok(init_handler(channel, n))
           _ -> Error(error.RESPError)
         }
       })
@@ -593,12 +593,12 @@ pub fn subscribe(
   use value <- receive_forever(client, timeout)
   case value {
     Ok([
-      resp.Push([
-        resp.BulkString("message"),
-        resp.BulkString(channel),
-        resp.BulkString(message),
-      ]),
-    ]) ->
+        resp.Push([
+          resp.BulkString("message"),
+          resp.BulkString(channel),
+          resp.BulkString(message),
+        ]),
+      ]) ->
       case message_handler(channel, message) {
         Continue -> True
         UnsubscribeFromAll -> {
@@ -632,10 +632,10 @@ pub fn subscribe_to_patterns(
       list.each(value, fn(item) {
         case item {
           resp.Push([
-            resp.BulkString("psubscribe"),
-            resp.BulkString(channel),
-            resp.Integer(n),
-          ]) -> init_handler(channel, n)
+              resp.BulkString("psubscribe"),
+              resp.BulkString(channel),
+              resp.Integer(n),
+            ]) -> init_handler(channel, n)
           _ -> Nil
         }
       })
@@ -644,13 +644,13 @@ pub fn subscribe_to_patterns(
   use value <- receive_forever(client, timeout)
   case value {
     Ok([
-      resp.Push([
-        resp.BulkString("pmessage"),
-        resp.BulkString(pattern),
-        resp.BulkString(channel),
-        resp.BulkString(message),
-      ]),
-    ]) ->
+        resp.Push([
+          resp.BulkString("pmessage"),
+          resp.BulkString(pattern),
+          resp.BulkString(channel),
+          resp.BulkString(message),
+        ]),
+      ]) ->
       case message_handler(pattern, channel, message) {
         Continue -> True
         UnsubscribeFromAll -> {

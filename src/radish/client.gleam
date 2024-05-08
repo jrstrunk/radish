@@ -39,7 +39,7 @@ fn handle_message(msg: Message, socket: mug.Socket) {
       case tcp.send(socket, cmd) {
         Ok(Nil) -> {
           let selector = tcp.new_selector()
-          case receive(socket, selector, <<>>, now(), timeout) {
+          case receive(socket, selector, <<>>, <<>>, now(), timeout) {
             Ok(reply) -> {
               actor.send(reply_with, Ok(reply))
               actor.continue(socket)
@@ -115,11 +115,12 @@ fn handle_message(msg: Message, socket: mug.Socket) {
 fn receive(
   socket: mug.Socket,
   selector: process.Selector(Result(BitArray, mug.Error)),
-  storage: BitArray,
+  to_decode_acc: BitArray,
+  decoded_acc: BitArray,
   start_time: Int,
   timeout: Int,
 ) {
-  case decode(storage) {
+  case decode(to_decode_acc) {
     Ok(value) -> Ok(value)
     Error(error) -> {
       case now() - start_time >= timeout * 1_000_000 {
@@ -131,7 +132,8 @@ fn receive(
               receive(
                 socket,
                 selector,
-                bit_array.append(storage, packet),
+                bit_array.append(to_decode_acc, packet),
+                <<>>,
                 start_time,
                 timeout,
               )
